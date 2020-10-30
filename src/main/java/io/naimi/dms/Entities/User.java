@@ -13,7 +13,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "users")
+@Table(name = "users")sssssssssss
 public class User implements Serializable {
     @Id
     private String cin;
