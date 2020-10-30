@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="home">
+<head>
+    <title>Demande de livraison</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container-fluid justify-content-center mt-3">
+        <div>
+            <div class="col-md-12">
+                <div class="card" style="border-radius: 25px">
+                    <div class="card-body">
+                        <h5 class="display-4 mx-4 mb-4">demande de livraison</h5>
+                        <hr class="mb-5"/>
+                        <label style="margin-left: 2mm; font-weight: bold">Nb. de demandes : </label>
+                        <label style="margin-left: 4mm; " th:text="${result}"></label>
+
+                            <table class="table table-hover" style="border-radius: 20px" id="table">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Ville</th>
+                                    <th>Adresse</th>
+                                    <th>Téléphone</th>
+                                    <th>Nom et Prénom (Destinataire)</th>
+                                    <th>Valeur (Dh)</th>
+                                    <th>Ouvrable par le livreur</th>
+                                    <th>État</th>
+                                    <th>Commentaire</th>
+                                </tr>
+                                <tr th:each="p:${packagesList}">
+                                    <td th:text="${p.id}"></td>
+                                    <td th:text="${p.city.name}"></td>
+                                    <td th:text="${p.address}"></td>
+                                    <td th:text="${p.phoneNumber}"></td>
+                                    <td th:text="${p.nameRecipient}"></td>
+                                    <td th:text="${p.value}"></td>
+                                    <td th:text="${p.toBeOpened}"></td>
+                                    <td th:text="${p.getStatuses().get(p.getStatuses().size()-1).status}"></td>
+                                    <td th:text="${p.getComments().get(p.getComments().size()-1).comment}"></td>
+                                    <td><a th:href="@{moreInfo(id=${p.id})}">Plus Info</a></td>
+                                </tr>
+                            </table>
+                        <a th:href="@{deliveryRequestForm}" style="border-radius: 25px"
+                           class="btn btn-block btn-outline-success mb-3">Ajouter</a>
+
+                        <ul class="nav nav-pills justify-content-center">
+                            <li th:each="page,status:${pages}">
+                                <a style="border-radius: 50px"
+                                   th:class="${status.index==currentPage?'btn btn-primary':'btn'}"
+                                   th:href="@{deliveryRequests(page=${status.index},size=${size})}"
+                                   th:text="${status.index}+1">
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

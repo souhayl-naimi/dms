@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="home">
+<head>
+    <meta charset="UTF-8">
+    <title>Demande De Livraison</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card py-4 my-4" style="border-radius: 25px">
+                    <div class="card-body">
+                        <h3 class="card-title text-muted ">Demande de livraison</h3>
+                        <hr class="mb-1"/>
+                        <form class="mt-3" th:action="@{saveDeliveryRequest}" method="post">
+                            <div class="form-group">
+                                <label class="control-label font-weight-bold">ID : </label>
+                                <label class="control-label" th:if="${package.id!=null}"
+                                       th:text="${package.id}"></label>
+                                <label class="control-label" th:if="${package.id==null}">à générer</label>
+                                <input type="hidden" name="id" class="form-control" style="border-radius: 25px"
+                                       th:value="${package.id}">
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label font-weight-bold">Ville : </label>
+                                <select name="city" style="min-width:90%;">
+                                    <option th:each="v:${villeList}" th:value="${v.id}" th:text="${v.name}"></option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label font-weight-bold">Adresse : </label>
+                                <input type="text" name="address" class="form-control"
+                                       th:value="${package.address}"
+                                       style="border-radius: 25px">
+                                <div class="alert alert-danger" style="border-radius: 25px"
+                                     th:errors="${package.address}"></span>
+                                </div>
+                            </div>
+                            <div class="form-group mt-3">
+                                <label class="control-label font-weight-bold">Téléphone : </label>
+                                <input type="text" name="phoneNumber" class="form-control"
+                                       th:value="${package.phoneNumber}"
+                                       style="border-radius: 25px">
+                                <div class="alert alert-danger" style="border-radius: 25px"
+                                     th:errors="${package.phoneNumber}"></span>
+                                </div>
+                            </div>
+                            <div class="form-group mt-3">
+                                <label class="control-label font-weight-bold">Nom et Prénom (Destinataire) : : </label>
+                                <input type="text" name="nameRecipient" class="form-control"
+                                       th:value="${package.nameRecipient}"
+                                       style="border-radius: 25px">
+                                <div class="alert alert-danger" style="border-radius: 25px"
+                                     th:errors="${package.nameRecipient}"></span>
+                                </div>
+                            </div>
+                            <div class="form-group mt-3">
+                                <label class="control-label font-weight-bold">Valeur (Dh) : </label>
+                                <input type="number" name="value" class="form-control"
+                                       th:value="${package.value}"
+                                       style="border-radius: 25px">
+                                <div class="alert alert-danger" style="border-radius: 25px"
+                                     th:errors="${package.value}"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label font-weight-bold">Ouvrable par le livreur : </label>
+                                <input type="checkbox" name="toBeOpened" th:checked="${package.toBeOpened}">
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleFormControlTextarea1" class="font-weight-bold ">Commentaire
+                                    : </label>
+                                <textarea class="form-control" id="exampleFormControlTextarea1" name="firstcom"
+                                          rows="3"></textarea>
+                            </div>
+                            <div class="container mt-3">
+                                <div class="row">
+                                    <div class="col text-center">
+                                        <button align="center" class="btn btn-outline-primary"
+                                                style="border-radius: 25px"
+                                                type="submit">Enregistrer
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>
