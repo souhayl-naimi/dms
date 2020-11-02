@@ -25,6 +25,6 @@ public class DeliveryMan {
     private String password;
     private String phoneNumber;
     private LocalDate dateJoined;
-    @OneToMany(mappedBy = "deliveryMan")
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "deliveryMan")
     private List<Package> packages;
 }

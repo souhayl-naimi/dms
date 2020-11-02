@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="home">
+<head>
+    <meta charset="UTF-8">
+    <title>Bienvenue!</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-12">
+                <div class="card mt-4" style="border-radius: 25px;">
+                    <div class="card-body">
+                        <h3 class="card-title text-muted">Bienvenue sur notre portail</h3>
+                        <hr>
+                        <div>
+                            <span class="badge badge-primary text-wrap" th:text="${param.name}"></span> <br>
+                            <br>
+                            <p class="font-weight-lighter"> ceci est votre nom d'utilisateur pour les futures connexions :
+                                <span class="text-warning font-weight-bold" th:text="${param.username}"></span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

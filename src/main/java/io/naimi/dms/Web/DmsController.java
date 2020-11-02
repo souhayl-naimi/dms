@@ -1,17 +1,13 @@
 package io.naimi.dms.Web;
 
-import com.sun.xml.bind.v2.runtime.reflect.Lister;
 import io.naimi.dms.DAO.*;
 import io.naimi.dms.Entities.*;
 import io.naimi.dms.Entities.Package;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,10 +21,9 @@ import javax.validation.Valid;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
@@ -42,9 +37,9 @@ public class DmsController {
     @Autowired
     private CommentRepository commentRepository;
     @Autowired
-    private PackageRepository packageRepository;
-    @Autowired
     private StatusRepository statusRepository;
+    @Autowired
+    private PackageRepository packageRepository;
     @Autowired
     private RoleRepository roleRepository;
     @Autowired
@@ -58,8 +53,18 @@ public class DmsController {
         return "home";
     }
 
+    @RequestMapping(value = "/welcomePage")
+    public String welcomePage() {
+        return "welcomePage";
+    }
+
     @RequestMapping(value = "/loginPage")
     public String loginPage() {
+
+        vendorRepository.findAll().forEach(vendor -> {
+            vendor.setUsername("G" + vendor.getId());
+            vendorRepository.save(vendor);
+        });
         return "loginPage";
     }
 
@@ -87,10 +92,10 @@ public class DmsController {
         user.setPassword(bCryptPasswordEncoder.encode(vendor.getPassword()));
         user.setEnabled(true);
         user.setRoles(roles);
-
+        user.setUsername("G" + vendor.getId());
         userRepository.save(user);
 
-        return "home";
+        return "redirect:/welcomePage?username=" + user.getUsername() + "&name=" + vendor.getFullName();
     }
 
     @RequestMapping(value = "/deliveryRequestForm")
@@ -110,7 +115,10 @@ public class DmsController {
         model.addAttribute("saved", aPackage);
         if (bindingResult.hasErrors()) return "deliveryRequestForm";
         aPackage.setDateCreated(LocalDateTime.now());
-        aPackage.setVendor(vendorRepository.findByCin(request.getUserPrincipal().getName()));
+        Long vendorID = Long.parseLong(request.getUserPrincipal().getName().substring(1));
+        System.out.println(vendorID);
+        aPackage.setVendor(vendorRepository.findById(vendorID).get());
+
         Comment comment = new Comment();
         comment.setComment(firstcom);
         comment.setTimeCommented(LocalDateTime.now());
@@ -118,6 +126,7 @@ public class DmsController {
         List<Comment> comments = new ArrayList<Comment>();
         comments.add(comment);
         aPackage.setComments(comments);
+
         Status status = new Status();
         status.setStatus("livraison demandé");
         status.setTimeUpdated(LocalDateTime.now());
@@ -125,6 +134,7 @@ public class DmsController {
         List<Status> statuses = new ArrayList<>();
         statuses.add(status);
         aPackage.setStatuses(statuses);
+
         packageRepository.save(aPackage);
         commentRepository.save(comment);
         statusRepository.save(status);
@@ -133,18 +143,102 @@ public class DmsController {
 
 
     @RequestMapping(value = "/deliveryRequests", method = GET)
-    public String cinemas(Model model,
-                          @RequestParam(name = "page", defaultValue = "0") int page,
-                          @RequestParam(name = "size", defaultValue = "1") int size,
-                          HttpServletRequest request) {
-        Page<Package> packagePage = packageRepository.findByVendor_Cin(request.getUserPrincipal().getName(), PageRequest.of(page, size));
-        model.addAttribute("result", packagePage.getTotalElements());
+    public String deliveryRequests(Model model,
+                                   @RequestParam(name = "page", defaultValue = "0") int page,
+                                   @RequestParam(name = "size", defaultValue = "2") int size,
+                                   @RequestParam(name = "name", defaultValue = "") String name,
+                                   HttpServletRequest request) {
+
+        Long vendorID = Long.parseLong(request.getUserPrincipal().getName().substring(1));
+        Page<Package> packagePage = packageRepository.findByVendor_IdAndNotDeletableAndReferenceContains(vendorID, false, name, PageRequest.of(page, size));
+
         model.addAttribute("pages", new int[packagePage.getTotalPages()]);
         model.addAttribute("currentPage", page);
-        model.addAttribute("packagesList", packagePage.getContent());
         model.addAttribute("size", size);
+        model.addAttribute("name", name);
+        model.addAttribute("packagesList", packagePage.getContent());
+        model.addAttribute("result", packagePage.getTotalElements());
         model.addAttribute("username", request.getUserPrincipal().getName());
         return "deliveryRequests";
+    }
+
+    @RequestMapping(value = "/deliveryRequestsByUsername", method = GET)
+    public String deliveryRequestsByUsername(Model model,
+                                             @RequestParam(name = "page", defaultValue = "0") int page,
+                                             @RequestParam(name = "size", defaultValue = "2") int size,
+                                             @RequestParam(name = "name", defaultValue = "") String name,
+                                             Long id) {
+
+
+        Page<Package> packagePage = packageRepository.findByVendor_IdAndReferenceContains(id, name, PageRequest.of(page, size));
+
+        model.addAttribute("pages", new int[packagePage.getTotalPages()]);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("size", size);
+        model.addAttribute("name", name);
+        model.addAttribute("id", id);
+        model.addAttribute("packagesList", packagePage.getContent());
+        model.addAttribute("result", packagePage.getTotalElements());
+        return "deliveryRequestsByUsername";
+    }
+
+    @RequestMapping(value = "/deliveries", method = GET)
+    public String deliveries(Model model,
+                             @RequestParam(name = "page", defaultValue = "0") int page,
+                             @RequestParam(name = "size", defaultValue = "2") int size,
+                             @RequestParam(name = "name", defaultValue = "") String name,
+                             HttpServletRequest request) {
+
+        Long vendorID = Long.parseLong(request.getUserPrincipal().getName().substring(1));
+        Page<Package> packagePage = packageRepository.findByVendor_IdAndNotDeletableAndReferenceContains(vendorID,true,name, PageRequest.of(page, size));
+//        Page<Package> packagePage = packageRepository.findByVendor_IdAndReferenceContains(vendorID,name, PageRequest.of(page, size));
+        model.addAttribute("pages", new int[packagePage.getTotalPages()]);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("size", size);
+        model.addAttribute("name", name);
+        model.addAttribute("packagesList", packagePage.getContent());
+        model.addAttribute("result", packagePage.getTotalElements());
+        return "deliveries";
+    }
+
+    @RequestMapping(value = "/vendors", method = GET)
+    public String vendors(Model model,
+                          @RequestParam(name = "page", defaultValue = "0") int page,
+                          @RequestParam(name = "size", defaultValue = "2") int size,
+                          @RequestParam(name = "code", defaultValue = "") String code) {
+
+        Page<Vendor> vendorPage = vendorRepository.findByUsernameContains(code, PageRequest.of(page, size));
+        model.addAttribute("pages", new int[vendorPage.getTotalPages()]);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("size", size);
+        model.addAttribute("code", code);
+        model.addAttribute("vendorList", vendorPage.getContent());
+        model.addAttribute("result", vendorPage.getTotalElements());
+        return "vendors";
+    }
+
+    @RequestMapping(value = "editPackage", method = RequestMethod.GET)
+    public String editPackage(Model model, Long id) {
+        Package aPackage = packageRepository.findById(id).get();
+        List<City> villeList = cityRepository.findAll();
+        model.addAttribute("villeList", villeList);
+        model.addAttribute("package", aPackage);
+        return "deliveryRequestFormUpdate";
+    }
+
+    @PostMapping(value = "saveDeliveryRequestUpdate")
+    public String saveDeliveryRequestUpdate(@Valid Package aPackage, HttpServletRequest request, Model model) {
+        Long vendorID = Long.parseLong(request.getUserPrincipal().getName().substring(1));
+        aPackage.setVendor(vendorRepository.findById(vendorID).get());
+        packageRepository.save(aPackage);
+        return "redirect:/deliveryRequests";
+
+    }
+
+    @RequestMapping(value = "/deleteRequest", method = RequestMethod.POST)
+    public String deleteCinema(Long id, int page, int size) {
+        packageRepository.deleteById(id);
+        return "redirect:/deliveryRequests?page=" + page + "&size=" + size + "";
     }
 
     @RequestMapping(value = "/moreInfo")
@@ -152,6 +246,14 @@ public class DmsController {
         Package aPackage = packageRepository.findById(id).get();
         model.addAttribute("package", aPackage);
         return "moreInfo";
+    }
+
+    @RequestMapping(value = "/profile")
+    private String profile(HttpServletRequest request, Model model) {
+        Long vendorID = Long.parseLong(request.getUserPrincipal().getName().substring(1));
+        Vendor vendor = vendorRepository.findById(vendorID).get();
+        model.addAttribute("vendor", vendor);
+        return "profile";
     }
 
     @PostMapping(value = "addComment")
@@ -174,6 +276,7 @@ public class DmsController {
         status.setApackage(aPackage);
         status.setStatus(stat);
         status.setTimeUpdated(LocalDateTime.now());
+        aPackage.setNotDeletable(true);
         aPackage.getStatuses().add(status);
         packageRepository.save(aPackage);
         statusRepository.save(status);
@@ -194,6 +297,7 @@ public class DmsController {
         model.addAttribute("size", size);
         return "cities";
     }
+
     @RequestMapping(value = "/deleteCity", method = RequestMethod.POST)
     public String deleteCity(Long id, int page, int size, String name) {
         cityRepository.deleteById(id);

@@ -19,6 +19,6 @@ public class City {
     private Long id;
     private String name;
     private double tarif;
-    @OneToMany(mappedBy = "city")
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "city")
     private Collection<Package> packages;
 }

@@ -23,13 +23,20 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@SequenceGenerator(name="seq", initialValue=1001, allocationSize=100)
 public class Vendor {
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq")
+    private Long id;
     @NotEmpty(message = "remplissez ce champ vide.")
     private String cin;
+    private String username;
     @NotEmpty (message = "remplissez ce champ vide")
     private String fullName;
+    @NotNull (message = "remplissez ce champ vide.")
     private String password;
+    @NotNull (message = "remplissez ce champ vide.")
+    private String rib;
     @NotNull (message = "remplissez ce champ vide.")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dob;
@@ -41,6 +48,6 @@ public class Vendor {
     private String phone;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateJoined;
-    @OneToMany(mappedBy = "vendor")
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "vendor")
     private List<Package> packages;
 }

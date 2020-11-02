@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="home">
+<head>
+    <title>E-commerçants</title>
+
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container-fluid justify-content-center mt-3">
+        <div>
+            <div class="col-md-12">
+                <div class="card" style="border-radius: 25px">
+                    <div class="card-body">
+                        <h5 class="display-4 mx-4 mb-4">E-commerçants</h5>
+                        <hr class="mb-5"/>
+                        <form class="form-inline" th:action="@{vendors}" method="get">
+                            <input class="form-control mr-sm-2" type="text" name="code" style="border-radius: 25px"
+                                   th:value="${code}" placeholder="Search">
+                            <button class="btn btn-outline-primary my-2 my-sm-0" style="border-radius: 25px"
+                                    type="submit">
+                                Chercher
+                            </button>
+                            <label style="margin-left: 2mm; font-weight: bold">Nb. de e-commerçants : </label>
+                            <label style="margin-left: 4mm; " th:text="${result}"></label>
+                        </form>
+                        <table class="table table-hover mt-3" style="border-radius: 20px" id="table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>CIN</th>
+                                    <th>Nom Complet</th>
+                                    <th>RIB</th>
+                                    <th>Date De Naissance</th>
+                                    <th>E-mail</th>
+                                    <th>Téléphone</th>
+                                    <th>Date d'Adhésion</th>
+                            </thead>
+                            <tr th:each="v:${vendorList}">
+                                <td th:text="${v.username}"></td>
+                                <td th:text="${v.cin}"></td>
+                                <td th:text="${v.fullName}"></td>
+                                <td th:text="${v.phone}"></td>
+                                <td th:text="${v.email}"></td>
+                                <td th:text="${v.rib}"></td>
+                                <td th:text="${v.dob}"></td>
+                                <td th:text="${v.dateJoined}"></td>
+                                <td><a  style="border-radius: 25px" class="btn btn-outline-primary" th:href="@{deliveryRequestsByUsername(id=${v.id})}">Demandes</a></td>
+
+                            </tr>
+                        </table>
+                        <ul class="nav nav-pills justify-content-center">
+                            <li th:each="page,status:${pages}">
+                                <a style="border-radius: 50px"
+                                   th:class="${status.index==currentPage?'btn btn-primary':'btn'}"
+                                   th:href="@{vendors(page=${status.index},size=${size},code=${code})}"
+                                   th:text="${status.index}+1">
+                                </a>
+                            </li>
+                        </ul>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

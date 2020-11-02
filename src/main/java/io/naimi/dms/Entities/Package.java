@@ -21,11 +21,13 @@ public class Package {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq")
     private Long id;
     /*private String city;*/
+    private String reference;
     private String address;
     private String nameRecipient;
     private Double value;
     private String phoneNumber;
     private boolean toBeOpened;
+    private boolean notDeletable;
     private LocalDateTime dateCreated;
     @ManyToOne
     private Vendor vendor;
@@ -33,8 +35,8 @@ public class Package {
     private City city;
     @ManyToOne
     private DeliveryMan deliveryMan;
-    @OneToMany(mappedBy = "aPackage")
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "aPackage")
     private List<Comment> comments;
-    @OneToMany(mappedBy = "apackage")
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "apackage")
     private List<Status> statuses;
 }

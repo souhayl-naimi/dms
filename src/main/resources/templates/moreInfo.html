@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
       layout:decorator="home">
 <head>
     <meta charset="UTF-8">
@@ -52,7 +53,7 @@
                                 <label class="col-form-label" th:text="${status.getStatus()}"></label>
                             </div>
                         </div>
-                        <form class="mt-3" th:action="@{updateStatus(id=${package.id})}" method="post">
+                        <form class="mt-3" th:action="@{updateStatus(id=${package.id})}" method="post" sec:authorize="hasRole('ROLE_ADMIN')">
                             <div class="form-group ml-4">
                                 <label class="col-form-label mr-3 font-weight-bold">Mise a jour l'État : </label>
                                 <select class="form-control" name="stat" id="exampleFormControlSelect1">

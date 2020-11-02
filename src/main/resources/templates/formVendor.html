@@ -45,6 +45,13 @@
                                 <div class="alert alert-danger" style="border-radius: 25px" th:errors="${vendor.email}"></span>
                             </div>
                             <div class="form-group mt-3">
+                                <label class="control-label font-weight-bold">RIB : </label>
+                                <input type="text" name="rib" class="form-control"
+                                       th:value="${vendor.rib}"
+                                       style="border-radius: 25px">
+                                <div class="alert alert-danger" style="border-radius: 25px" th:errors="${vendor.rib}"></span>
+                            </div>
+                            <div class="form-group mt-3">
                                 <label class="control-label font-weight-bold">Date de naissance : </label>
                                 <input type="date" name="dob" class="form-control" th:value="${vendor.dob}"
                                        style="border-radius: 25px">

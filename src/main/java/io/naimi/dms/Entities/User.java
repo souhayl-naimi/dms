@@ -3,6 +3,7 @@ package io.naimi.dms.Entities;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -13,9 +14,11 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "users")sssssssssss
+@Table(name = "users")
+@ToString
 public class User implements Serializable {
     @Id
+    private String username;
     private String cin;
     private String password;
     private Boolean enabled;
@@ -23,3 +26,5 @@ public class User implements Serializable {
     @JoinTable(name = "USERS_ROLES")
     private List<Role> roles;
 }
+
+

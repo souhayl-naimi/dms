@@ -20,12 +20,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             throws Exception {
         auth.jdbcAuthentication()
                 .dataSource(dataSource)
-                .usersByUsernameQuery("select cin,password,enabled "
+                .usersByUsernameQuery("select username,password,enabled "
                         + "from users "
-                        + "where cin = ?")
-                .authoritiesByUsernameQuery("select user_cin,roles_role "
+                        + "where username = ?")
+                .authoritiesByUsernameQuery("select user_username,roles_role "
                         + "from users_roles "
-                        + "where user_cin = ?");
+                        + "where user_username = ?");
     }
 
     @Override
@@ -33,7 +33,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
         http
                 .authorizeRequests()
-                .antMatchers("/webjars/**", "/css/**", "/","/formVendor","/saveVendor","/home")
+                .antMatchers("/webjars/**", "/css/**", "/","/formVendor","/saveVendor","/home","/welcomePage")
                 .permitAll()
                 .anyRequest()
                 .authenticated();

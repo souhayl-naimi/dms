@@ -15,9 +15,11 @@
                     <div class="card-body">
                         <h5 class="display-4 mx-4 mb-4">demande de livraison</h5>
                         <hr class="mb-5"/>
-                        <form class="form-inline" th:action="@{deliveryRequests}" method="get">
+                        <form class="form-inline" th:action="@{deliveryRequestsByUsername}" method="get">
                             <input class="form-control mr-sm-2" type="text" name="name" style="border-radius: 25px"
                                    th:value="${name}" placeholder="Search">
+                            <input class="form-control mr-sm-2" type="hidden" name="id" style="border-radius: 25px"
+                                   th:value="${id}" placeholder="Search">
                             <button class="btn btn-outline-primary my-2 my-sm-0" style="border-radius: 25px"
                                     type="submit">
                                 Chercher
@@ -102,14 +104,12 @@
                                 <td><a th:href="@{moreInfo(id=${p.id})}">Plus Info</a></td>
                             </tr>-->
                         </table>
-                        <a th:href="@{deliveryRequestForm}" style="border-radius: 25px"
-                           class="btn btn-block btn-outline-success mb-3">Ajouter</a>
 
                         <ul class="nav nav-pills justify-content-center">
                             <li th:each="page,status:${pages}">
                                 <a style="border-radius: 50px"
                                    th:class="${status.index==currentPage?'btn btn-primary':'btn'}"
-                                   th:href="@{deliveryRequests(page=${status.index},size=${size},name=${name})}"
+                                   th:href="@{deliveryRequestsByUsername(page=${status.index},size=${size},name=${name},id=${id})}"
                                    th:text="${status.index}+1">
                                 </a>
                             </li>
