@@ -147,15 +147,25 @@ public class DmsController {
                                    @RequestParam(name = "page", defaultValue = "0") int page,
                                    @RequestParam(name = "size", defaultValue = "2") int size,
                                    @RequestParam(name = "name", defaultValue = "") String name,
+                                   @RequestParam(name = "cityID", defaultValue = "0") Long cityID,
                                    HttpServletRequest request) {
 
-        Long vendorID = Long.parseLong(request.getUserPrincipal().getName().substring(1));
-        Page<Package> packagePage = packageRepository.findByVendor_IdAndNotDeletableAndReferenceContains(vendorID, false, name, PageRequest.of(page, size));
+        Page<Package> packagePage = null;
 
+        Long vendorID = Long.parseLong(request.getUserPrincipal().getName().substring(1));
+        if (cityID != 0) {
+            packagePage = packageRepository.findByVendor_IdAndNotDeletableAndReferenceContainsAndCity_Id(vendorID, false, name, cityID, PageRequest.of(page, size));
+        }
+        else if(cityID == 0) {
+            packagePage = packageRepository.findByVendor_IdAndNotDeletableAndReferenceContains(vendorID, false, name, PageRequest.of(page, size));
+        }
+        List<City> villeList = cityRepository.findAll();
+        model.addAttribute("villeList", villeList);
         model.addAttribute("pages", new int[packagePage.getTotalPages()]);
         model.addAttribute("currentPage", page);
         model.addAttribute("size", size);
         model.addAttribute("name", name);
+        model.addAttribute("cityID", cityID);
         model.addAttribute("packagesList", packagePage.getContent());
         model.addAttribute("result", packagePage.getTotalElements());
         model.addAttribute("username", request.getUserPrincipal().getName());
@@ -168,10 +178,7 @@ public class DmsController {
                                              @RequestParam(name = "size", defaultValue = "2") int size,
                                              @RequestParam(name = "name", defaultValue = "") String name,
                                              Long id) {
-
-
         Page<Package> packagePage = packageRepository.findByVendor_IdAndReferenceContains(id, name, PageRequest.of(page, size));
-
         model.addAttribute("pages", new int[packagePage.getTotalPages()]);
         model.addAttribute("currentPage", page);
         model.addAttribute("size", size);
@@ -190,7 +197,7 @@ public class DmsController {
                              HttpServletRequest request) {
 
         Long vendorID = Long.parseLong(request.getUserPrincipal().getName().substring(1));
-        Page<Package> packagePage = packageRepository.findByVendor_IdAndNotDeletableAndReferenceContains(vendorID,true,name, PageRequest.of(page, size));
+        Page<Package> packagePage = packageRepository.findByVendor_IdAndNotDeletableAndReferenceContains(vendorID, true, name, PageRequest.of(page, size));
 //        Page<Package> packagePage = packageRepository.findByVendor_IdAndReferenceContains(vendorID,name, PageRequest.of(page, size));
         model.addAttribute("pages", new int[packagePage.getTotalPages()]);
         model.addAttribute("currentPage", page);
