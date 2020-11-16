@@ -33,7 +33,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
         http
                 .authorizeRequests()
-                .antMatchers("/webjars/**", "/css/**", "/","/formVendor","/saveVendor","/home","/welcomePage")
+                .antMatchers("/webjars/**", "/css/**", "/","/formVendor","/saveVendor","/formDeliveryGuy","/saveLivreur","/home","/welcomePage")
                 .permitAll()
                 .anyRequest()
                 .authenticated();
@@ -41,7 +41,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin()
                 .loginPage("/loginPage")
                 .permitAll()
-                .defaultSuccessUrl("/deliveryRequestForm", true);;
+                .defaultSuccessUrl("/home", true);;
         http
                 .logout();
     }

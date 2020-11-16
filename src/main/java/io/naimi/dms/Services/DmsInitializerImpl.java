@@ -3,6 +3,7 @@ package io.naimi.dms.Services;
 import io.naimi.dms.DAO.*;
 import io.naimi.dms.Entities.*;
 import io.naimi.dms.Entities.Package;
+import net.bytebuddy.utility.RandomString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,9 +29,30 @@ public class DmsInitializerImpl implements IDmsInitializer {
     @Autowired
     private CityRepository cityRepository;
     @Autowired
+    private DeliveryManRepository deliveryManRepository;
+    @Autowired
     private CommentRepository commentRepository;
     @Autowired
     private StatusRepository statusRepository;
+
+    @Override
+    public void initDms() {
+        cityRepository.findAll().forEach(city -> {
+            for (int i = 1; i <=10; i++) {
+                DeliveryMan deliveryMan = new DeliveryMan();
+                deliveryMan.setFullName("LIVREUR-"+ i);
+                deliveryMan.setDob(LocalDate.of(1995, 1, 1));
+                deliveryMan.setPhone("0690909231");
+                deliveryMan.setEmail("LIVREUR"+i+"@outlook.com");
+                deliveryMan.setDateJoined(LocalDate.now());
+                deliveryMan.setCin("M892"+i);
+                deliveryMan.setRib("FR7620041010057643834595126");
+                deliveryMan.setPassword("$2a$10$SAdK.T/kr440mqW7UzE7i.JKmn79INS3eUtgN0gOBHD3Wogxa679u");
+                deliveryMan.setCity(city);
+                deliveryManRepository.save(deliveryMan);
+            }
+        });
+    }
 
     @Override
     public void initVendors() {
@@ -72,10 +94,12 @@ public class DmsInitializerImpl implements IDmsInitializer {
 
     @Override
     public void initUsers() {
+
         Role role = new Role("ROLE_VENDOR", "role Vendeur");
         roleRepository.save(role);
         List<Role> roles = new ArrayList<Role>();
         roles.add(role);
+
         vendorRepository.findAll().forEach(vendor -> {
             User user = new User();
             user.setUsername("G" + vendor.getId());
@@ -85,6 +109,22 @@ public class DmsInitializerImpl implements IDmsInitializer {
             userRepository.save(user);
         });
 
+        Role roleLivreur = new Role("ROLE_LIVREUR", "role Livreur");
+        roleRepository.save(roleLivreur);
+        List<Role> rolesLivreur = new ArrayList<Role>();
+        rolesLivreur.add(roleLivreur);
+
+        deliveryManRepository.findAll().forEach(dm -> {
+            User userLivreur = new User();
+            userLivreur.setUsername("G" + dm.getId());
+            userLivreur.setEnabled(true);
+            userLivreur.setPassword("$2a$10$SAdK.T/kr440mqW7UzE7i.JKmn79INS3eUtgN0gOBHD3Wogxa679u");
+            userLivreur.setRoles(rolesLivreur);
+            userRepository.save(userLivreur);
+        });
+
+
+        ///////////////////////////////////////
         Role roleAdmin = new Role("ROLE_ADMIN", "role Vendeur");
         roleRepository.save(roleAdmin);
         List<Role> rolesAdmin = new ArrayList<Role>();
@@ -100,13 +140,14 @@ public class DmsInitializerImpl implements IDmsInitializer {
 
     @Override
     public void initCities() {
-        Stream.of("Marrakesh","Casablance","El Jadida","Rabat","Safi","Khouribga").forEach(name->{
+        Stream.of("Marrakesh", "Casablance", "El Jadida", "Rabat", "Safi", "Khouribga").forEach(name -> {
             City city = new City();
             city.setName(name);
             city.setTarif(new Random().nextInt(50));
             cityRepository.save(city);
         });
     }
+
     @Override
     public void initPackages() {
         vendorRepository.findAll().forEach(vendor -> {

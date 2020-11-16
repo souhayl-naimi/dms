@@ -12,7 +12,7 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-6">
-                <div class="card mt-4" style="border-radius: 25px;">
+                <div class="card mt-4 mb-4"  style="border-radius: 25px;">
                     <div class="card-body">
                         <h3 class="card-title text-muted">Plus Infos!</h3>
                         <hr>
@@ -46,19 +46,20 @@
                         </div>
                         <div class="form-group ml-4">
                             <label class="col-form-label mr-3 font-weight-bold">État : </label>
-
                             <div class="form-group row ml-4" th:each="status:${package.getStatuses()}">
                                 <label class="col-form-label mr-3 font-weight-bold"
                                        th:text="${status.getTimeUpdated()}"></label>
                                 <label class="col-form-label" th:text="${status.getStatus()}"></label>
                             </div>
                         </div>
-                        <form class="mt-3" th:action="@{updateStatus(id=${package.id})}" method="post" sec:authorize="hasRole('ROLE_ADMIN')">
+                        <form class="mt-3" th:action="@{updateStatus(id=${package.id})}" method="post"
+                              sec:authorize="hasAnyRole('ADMIN', 'LIVREUR')">
                             <div class="form-group ml-4">
                                 <label class="col-form-label mr-3 font-weight-bold">Mise a jour l'État : </label>
                                 <select class="form-control" name="stat" id="exampleFormControlSelect1">
                                     <option value="reçu par HamidLiv">Reçu par HamidLiv</option>
                                     <option value="en transit">En transit</option>
+                                    <option value="recu par le livreur">recu par le livreur</option>
                                     <option value="en cours de livraison">en cours de livraison</option>
                                     <option value="livrée">Livrée</option>
                                 </select>
@@ -74,6 +75,27 @@
                                 </div>
                             </div>
                         </form>
+                        <form class="mt-3" th:action="@{setDeliveryMan(id=${package.id})}" th:if="${package.getStatuses().size()>1}" method="post"
+                              sec:authorize="hasRole('ROLE_ADMIN')">
+                            <div class="form-group ml-4">
+                                <label class="control-label font-weight-bold">Livreur : </label>
+                                <select class="form-control" name="deliveryMan" style="min-width:90%; border-radius: 50px;">
+                                    <option th:each="d:${deliveryMEN}" th:value="${d.id}"
+                                            th:text="${d.fullName}+' --- '+${d.city.getName()}" th:selected="${d.id}==${dID}"></option>
+                                </select>
+                            </div>
+                            <div class="container mt-3">
+                                <div class="row">
+                                    <div class="col text-center">
+                                        <button align="center" class="btn btn-outline-primary"
+                                                style="border-radius: 25px"
+                                                type="submit">Affecter
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
                         <div class="form-group ml-4">
                             <label class="col-form-label mr-3 font-weight-bold">Commentaires : </label>
 
@@ -101,6 +123,7 @@
                                 </div>
                             </div>
                         </form>
+
                     </div>
                 </div>
             </div>

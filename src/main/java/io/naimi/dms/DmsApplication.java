@@ -34,10 +34,11 @@ public class DmsApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        iDmsInitializer.initVendors();
-        iDmsInitializer.initUsers();
         iDmsInitializer.initCities();
+        iDmsInitializer.initVendors();
+        iDmsInitializer.initDms();
         iDmsInitializer.initPackages();
+        iDmsInitializer.initUsers();
 
     }
 }

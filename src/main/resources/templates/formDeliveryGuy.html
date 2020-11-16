@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="home">
+<head>
+    <meta charset="UTF-8">
+    <title>Inscription - Livreur</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card py-4 my-4" style="border-radius: 25px">
+                    <div class="card-body">
+                        <h3 class="card-title text-muted " th:if="${livreur.cin==null}">Inscription Livreur</h3>
+                        <h3 class="card-title text-muted " th:if="${livreur.cin!=null}">Mise à jour</h3>
+                        <hr class="mb-1"/>
+                        <form class="mt-3" th:action="@{saveLivreur}" method="post">
+                            <div class="form-group">
+                                <label class="control-label font-weight-bold">Carte d'Identité Nationale : </label>
+                                <input type="text" name="cin" class="form-control" th:value="${livreur.cin}"
+                                       style="border-radius: 25px">
+                                <div class="alert alert-danger" style="border-radius: 25px"
+                                     th:errors="${livreur.cin}"></div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label font-weight-bold">Nom Complet : </label>
+                                <input type="text" name="fullName" class="form-control"
+                                       th:value="${livreur.fullName}"
+                                       style="border-radius: 25px">
+                                <div class="alert alert-danger" style="border-radius: 25px"
+                                     th:errors="${livreur.fullName}"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label font-weight-bold">Ville : </label>
+                                <select class="form-control mr-sm-2" name="city" style="border-radius: 50px;">
+                                    <option value="0">Choisir une ville</option>
+                                    <option th:each="v:${villeList}" th:value="${v.id}" th:text="${v.name}"></option>
+                                </select>
+                            </div>
+                            <div class="form-group mt-3">
+                                <label class="control-label font-weight-bold">Téléphone : </label>
+                                <input type="text" name="phone" class="form-control"
+                                       th:value="${livreur.phone}"
+                                       style="border-radius: 25px">
+                                <div class="alert alert-danger" style="border-radius: 25px"
+                                     th:errors="${livreur.phone}"></span>
+                                </div>
+                                <div class="form-group mt-3">
+                                    <label class="control-label font-weight-bold">E-mail : </label>
+                                    <input type="text" name="email" class="form-control"
+                                           th:value="${livreur.email}"
+                                           style="border-radius: 25px">
+                                    <div class="alert alert-danger" style="border-radius: 25px"
+                                         th:errors="${livreur.email}"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group mt-3">
+                                    <label class="control-label font-weight-bold">RIB : </label>
+                                    <input type="text" name="rib" class="form-control"
+                                           th:value="${livreur.rib}"
+                                           style="border-radius: 25px">
+                                    <div class="alert alert-danger" style="border-radius: 25px"
+                                         th:errors="${livreur.rib}"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group mt-3">
+                                    <label class="control-label font-weight-bold">Date de naissance
+                                        : </label>
+                                    <input type="date" name="dob" class="form-control"
+                                           th:value="${livreur.dob}"
+                                           style="border-radius: 25px">
+                                    <div class="alert alert-danger" style="border-radius: 25px"
+                                         th:errors="${livreur.dob}"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group mt-3">
+                                    <label class="control-label font-weight-bold">Mot de passe
+                                        : </label>
+                                    <input type="password" name="password" class="form-control"
+                                           th:value="${livreur.password}"
+                                           style="border-radius: 25px">
+                                    <div class="alert alert-danger" style="border-radius: 25px"
+                                         th:errors="${livreur.password}"></span>
+                                    </div>
+                                </div>
+                                <div class="container mt-3">
+                                    <div class="row">
+                                        <div class="col text-center">
+                                            <button align="center" class="btn btn-outline-primary"
+                                                    style="border-radius: 25px"
+                                                    type="submit">Enregistrer
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

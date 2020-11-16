@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="home">
+<head>
+    <meta charset="UTF-8">
+    <title>Votre Profile</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card mt-4" style="border-radius: 25px;">
+                    <div class="card-body">
+                        <h1 class="display-4" th:text="${deliveryMan.getFullName()}"></h1>
+                        <hr>
+                        <div class="form-group row ml-4">
+                            <label class="col-form-label mr-3 font-weight-bold">Nom d'utilisateur: </label>
+                            <label class="col-form-label" th:text="'G'+${deliveryMan.getId()}"></label>
+                        </div>
+                        <div class="form-group row ml-4">
+                            <label class="col-form-label mr-3 font-weight-bold">Carte d'Identité Nationale : </label>
+                            <label class="col-form-label" th:text="${deliveryMan.getCin()}"></label>
+                        </div>
+                        <div class="form-group row ml-4">
+                            <label class="col-form-label mr-3 font-weight-bold">Ville : </label>
+                            <label class="col-form-label" th:text="${deliveryMan.getCity().getName()}"></label>
+                        </div>
+                        <div class="form-group row ml-4">
+                            <label class="col-form-label mr-3 font-weight-bold">RIB :</label>
+                            <label class="col-form-label" th:text="${deliveryMan.rib}"></label>
+                        </div>
+                        <div class="form-group row ml-4">
+                            <label class="col-form-label mr-3 font-weight-bold">Date de naissane :</label>
+                            <label class="col-form-label" th:text="${deliveryMan.dob}"></label>
+                        </div>
+                        <div class="form-group row ml-4">
+                            <label class="col-form-label mr-3 font-weight-bold">E-mail :</label>
+                            <label class="col-form-label" th:text="${deliveryMan.email}"></label>
+                        </div>
+                        <div class="form-group row ml-4">
+                            <label class="col-form-label mr-3 font-weight-bold">Télephone</label>
+                            <label class="col-form-label" th:text="${deliveryMan.phone}"></label>
+                        </div>
+                        <div class="form-group row ml-4">
+                            <label class="col-form-label mr-3 font-weight-bold">Date d'adhésion</label>
+                            <label class="col-form-label" th:text="${deliveryMan.dateJoined}"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

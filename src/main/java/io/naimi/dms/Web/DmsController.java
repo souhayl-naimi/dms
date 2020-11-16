@@ -35,6 +35,8 @@ public class DmsController {
     @Autowired
     private VendorRepository vendorRepository;
     @Autowired
+    private DeliveryManRepository deliveryManRepository;
+    @Autowired
     private CommentRepository commentRepository;
     @Autowired
     private StatusRepository statusRepository;
@@ -65,6 +67,10 @@ public class DmsController {
             vendor.setUsername("G" + vendor.getId());
             vendorRepository.save(vendor);
         });
+        deliveryManRepository.findAll().forEach(d -> {
+            d.setUsername("G" + d.getId());
+            deliveryManRepository.save(d);
+        });
         return "loginPage";
     }
 
@@ -73,6 +79,7 @@ public class DmsController {
         model.addAttribute(new Vendor());
         return "formVendor";
     }
+
 
     @PostMapping(value = "saveVendor")
     public String saveVendor(@Valid Vendor vendor, BindingResult bindingResult, Model model) {
@@ -98,6 +105,7 @@ public class DmsController {
         return "redirect:/welcomePage?username=" + user.getUsername() + "&name=" + vendor.getFullName();
     }
 
+
     @RequestMapping(value = "/deliveryRequestForm")
     public String deliveryRequestForm(Model model) {
 
@@ -107,6 +115,7 @@ public class DmsController {
 
         return "deliveryRequestForm";
     }
+
 
     @PostMapping(value = "saveDeliveryRequest")
     public String saveDeliveryRequest(@Valid Package aPackage, HttpServletRequest request,
@@ -155,17 +164,16 @@ public class DmsController {
         Long vendorID = Long.parseLong(request.getUserPrincipal().getName().substring(1));
         if (cityID != 0) {
             packagePage = packageRepository.findByVendor_IdAndNotDeletableAndReferenceContainsAndCity_Id(vendorID, false, name, cityID, PageRequest.of(page, size));
-        }
-        else if(cityID == 0) {
+        } else if (cityID == 0) {
             packagePage = packageRepository.findByVendor_IdAndNotDeletableAndReferenceContains(vendorID, false, name, PageRequest.of(page, size));
         }
         List<City> villeList = cityRepository.findAll();
+        model.addAttribute("cityID", cityID);
         model.addAttribute("villeList", villeList);
         model.addAttribute("pages", new int[packagePage.getTotalPages()]);
         model.addAttribute("currentPage", page);
         model.addAttribute("size", size);
         model.addAttribute("name", name);
-        model.addAttribute("cityID", cityID);
         model.addAttribute("packagesList", packagePage.getContent());
         model.addAttribute("result", packagePage.getTotalElements());
         model.addAttribute("username", request.getUserPrincipal().getName());
@@ -176,9 +184,18 @@ public class DmsController {
     public String deliveryRequestsByUsername(Model model,
                                              @RequestParam(name = "page", defaultValue = "0") int page,
                                              @RequestParam(name = "size", defaultValue = "2") int size,
+                                             @RequestParam(name = "cityID", defaultValue = "0") Long cityID,
                                              @RequestParam(name = "name", defaultValue = "") String name,
                                              Long id) {
-        Page<Package> packagePage = packageRepository.findByVendor_IdAndReferenceContains(id, name, PageRequest.of(page, size));
+        Page<Package> packagePage = null;
+        if (cityID != 0) {
+            packagePage = packageRepository.findByVendor_IdAndReferenceContainsAndCity_Id(id, name, cityID, PageRequest.of(page, size));
+        } else if (cityID == 0) {
+            packagePage = packageRepository.findByVendor_IdAndReferenceContains(id, name, PageRequest.of(page, size));
+        }
+        List<City> villeList = cityRepository.findAll();
+        model.addAttribute("cityID", cityID);
+        model.addAttribute("villeList", villeList);
         model.addAttribute("pages", new int[packagePage.getTotalPages()]);
         model.addAttribute("currentPage", page);
         model.addAttribute("size", size);
@@ -194,11 +211,21 @@ public class DmsController {
                              @RequestParam(name = "page", defaultValue = "0") int page,
                              @RequestParam(name = "size", defaultValue = "2") int size,
                              @RequestParam(name = "name", defaultValue = "") String name,
+                             @RequestParam(name = "cityID", defaultValue = "0") Long cityID,
+
                              HttpServletRequest request) {
 
+
+        Page<Package> packagePage = null;
         Long vendorID = Long.parseLong(request.getUserPrincipal().getName().substring(1));
-        Page<Package> packagePage = packageRepository.findByVendor_IdAndNotDeletableAndReferenceContains(vendorID, true, name, PageRequest.of(page, size));
-//        Page<Package> packagePage = packageRepository.findByVendor_IdAndReferenceContains(vendorID,name, PageRequest.of(page, size));
+        if (cityID != 0) {
+            packagePage = packageRepository.findByVendor_IdAndNotDeletableAndReferenceContainsAndCity_Id(vendorID, true, name, cityID, PageRequest.of(page, size));
+        } else if (cityID == 0) {
+            packagePage = packageRepository.findByVendor_IdAndNotDeletableAndReferenceContains(vendorID, true, name, PageRequest.of(page, size));
+        }
+        List<City> villeList = cityRepository.findAll();
+        model.addAttribute("cityID", cityID);
+        model.addAttribute("villeList", villeList);
         model.addAttribute("pages", new int[packagePage.getTotalPages()]);
         model.addAttribute("currentPage", page);
         model.addAttribute("size", size);
@@ -249,9 +276,12 @@ public class DmsController {
     }
 
     @RequestMapping(value = "/moreInfo")
-    private String moreInfo(Long id, Model model) {
+    private String moreInfo(Long id, Model model,Long dID) {
         Package aPackage = packageRepository.findById(id).get();
+        List<DeliveryMan> deliveryMEN = deliveryManRepository.findByCity_Id(aPackage.getCity().getId());
         model.addAttribute("package", aPackage);
+        model.addAttribute("dID",dID);
+        model.addAttribute("deliveryMEN", deliveryMEN);
         return "moreInfo";
     }
 

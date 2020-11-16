@@ -3,7 +3,7 @@
       xmlns:layout="http://ultraq.net.nz/thymeleaf/layout"
       layout:decorator="home">
 <head>
-    <title>Demande de livraison</title>
+    <title>Mes Livraisons</title>
 
 </head>
 <body>
@@ -13,37 +13,23 @@
             <div class="col-md-12">
                 <div class="card" style="border-radius: 25px">
                     <div class="card-body">
-                        <h5 class="display-4 mx-4 mb-4">Livraisons Demandées</h5>
+                        <h5 class="display-4 mx-4 mb-4">Colis à livrer</h5>
                         <hr class="mb-5"/>
-                        <form class="form-inline " th:action="@{deliveryRequestsByUsername}" method="get">
+                        <form class="form-inline" th:action="@{toBeDelivered}" method="get">
                             <input class="form-control mr-sm-2" type="text" name="name" style="border-radius: 25px"
-                                   th:value="${name}" placeholder="Search">
-                            <input class="form-control mr-sm-2" type="hidden" name="id" style="border-radius: 25px"
-                                   th:value="${id}" placeholder="Search">
-                            <select  class="form-control mr-sm-2" name="cityID" style="border-radius: 50px;">
-                                <option value="0">Choisir une ville</option>
-                                <option th:each="v:${villeList}" th:value="${v.id}" th:selected="${v.id}==${cityID}" th:text="${v.name}"></option>
-                            </select>
+                                   th:value="${name}" placeholder="chercher par réference">
+
                             <button class="btn btn-outline-primary my-2 my-sm-0" style="border-radius: 25px"
                                     type="submit">
                                 Chercher
                             </button>
-                            <label style="margin-left: 2mm; font-weight: bold">Nb. de livraisons : </label>
+
+                            <label style="margin-left: 2mm; font-weight: bold">Nb. de colis : </label>
                             <label style="margin-left: 4mm; " th:text="${result}"></label>
                         </form>
                         <table class="table table-hover mt-3" style="border-radius: 20px" id="table">
                             <thead>
                                 <tr>
-                                    <!--<th>ID</th>
-                                    <th>Réf</th>
-                                    <th>Ville</th>
-                                    <th>Adresse</th>
-                                    <th>Téléphone</th>
-                                    <th>Destinataire</th>
-                                    <th>Valeur (Dh)</th>
-                                    <th>Ouvrable par le livreur</th>
-                                    <th>État</th>
-                                    <th>Commentaire</th>-->
                                     <th>Destinataire</th>
                                     <th>Détails</th>
                                     <th>État</th>
@@ -77,43 +63,13 @@
                                 <td class="font-weight-lighter" th:text="${p.getStatuses().get(p.getStatuses().size()-1).status}"></td>
                                 <td class="font-weight-lighter" th:text="${p.getComments().get(p.getComments().size()-1).comment}"></td>
                                 <td><a  style="border-radius: 25px" class="btn btn-outline-primary" th:href="@{moreInfo(id=${p.id})}">Plus Info</a></td>
-                                <td>
-                                    <form th:action="@{deleteRequest}" method="post">
-                                        <input type="hidden" name="id" th:value="${p.id}"/>
-                                        <input type="hidden" name="page" th:value="${currentPage}"/>
-                                        <input type="hidden" name="name" th:value="${name}"/>
-                                        <input type="hidden" name="size" th:value="${size}"/>
-                                        <button type="submit" style="border-radius: 25px"
-                                                class="btn btn-outline-danger">
-                                            Supprimer
-                                        </button>
-                                    </form>
-                                </td>
-                                <td>
-                                    <a th:href="@{editPackage(id=${p.id})}" style="border-radius: 25px"
-                                       class="btn btn-outline-warning">Modifier</a>
-                                </td>
-                            </tr><!--
-                            <tr th:each="p:${packagesList}">
-                                <td th:text="${p.id}"></td>
-                                <td th:text="${p.reference}"></td>
-                                <td th:text="${p.city.name}"></td>
-                                <td th:text="${p.address}"></td>
-                                <td th:text="${p.phoneNumber}"></td>
-                                <td th:text="${p.nameRecipient}"></td>
-                                <td th:text="${p.value}"></td>
-                                <td th:text="${p.toBeOpened}"></td>
-                                <td th:text="${p.getStatuses().get(p.getStatuses().size()-1).status}"></td>
-                                <td th:text="${p.getComments().get(p.getComments().size()-1).comment}"></td>
-                                <td><a th:href="@{moreInfo(id=${p.id})}">Plus Info</a></td>
-                            </tr>-->
+                            </tr>
                         </table>
-
                         <ul class="nav nav-pills justify-content-center">
                             <li th:each="page,status:${pages}">
                                 <a style="border-radius: 50px"
                                    th:class="${status.index==currentPage?'btn btn-primary':'btn'}"
-                                   th:href="@{deliveryRequestsByUsername(page=${status.index},size=${size},name=${name},id=${id})}"
+                                   th:href="@{deliveries(page=${status.index},size=${size})}"
                                    th:text="${status.index}+1">
                                 </a>
                             </li>

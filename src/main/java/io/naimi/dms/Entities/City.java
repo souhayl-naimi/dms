@@ -19,6 +19,8 @@ public class City {
     private Long id;
     private String name;
     private double tarif;
+    @OneToMany(cascade = CascadeType.REMOVE,mappedBy = "city")
+    private Collection<DeliveryMan> deliveryMen;
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "city")
     private Collection<Package> packages;
 }

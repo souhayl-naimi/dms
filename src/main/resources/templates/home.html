@@ -13,7 +13,6 @@
 
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <!--    <img th:src="@{'/images/cosumar.jpg'}"/>-->
     <a class="navbar-brand text-primary" th:href="@{home}">HamidLiv</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
             aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
@@ -21,24 +20,69 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNavDropdown">
         <ul class="navbar-nav">
-            <li class="nav-item dropdown">
+
+
+            <li class="nav-item dropdown" sec:authorize="!isAuthenticated()">
                 <a class="nav-link dropdown-toggle" href="#" id="navnav" data-toggle="dropdown">
                     Espace E-commerçant
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                    <a class="dropdown-item" th:href="@{/formVendor}" sec:authorize="!isAuthenticated()">Inscription</a>
-                    <a class="dropdown-item" th:href="@{/deliveryRequests}" sec:authorize="hasRole('ROLE_VENDOR')">Mes Demandes De Livraison</a>
-                    <a class="dropdown-item" th:href="@{/deliveries}" sec:authorize="hasRole('ROLE_VENDOR')">Mes Livraisons</a>
+                    <a class="dropdown-item" th:href="@{/formVendor}">Inscription</a>
+                </div>
+            </li>
+
+            <li class="nav-item dropdown" sec:authorize="hasRole('ROLE_ADMIN')">
+                <a class="nav-link dropdown-toggle" href="#" id="navnav1" data-toggle="dropdown">
+                    Espace E-commerçant
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+
+                    <a class="dropdown-item" th:href="@{/vendors}">Demandes De
+                        Livraision</a>
+                </div>
+            </li>
+
+            <li class="nav-item dropdown" sec:authorize="hasRole('ROLE_VENDOR')">
+                <a class="nav-link dropdown-toggle" href="#" id="navnav3" data-toggle="dropdown">
+                    Espace E-commerçant
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <a class="dropdown-item" th:href="@{/deliveryRequests}">Mes
+                        Demandes De Livraison</a>
+                    <a class="dropdown-item" th:href="@{/deliveries}">Mes
+                        Livraisons</a>
+                </div>
+            </li>
+            <li class="nav-item dropdown" sec:authorize="!isAuthenticated()">
+                <a class="nav-link dropdown-toggle" href="#" id="navnav5" data-toggle="dropdown">
+                    Espace Livreur
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <a class="dropdown-item" th:href="@{/formDeliveryGuy}">Inscription</a>
+                </div>
+            </li>
+
+            <li class="nav-item dropdown" sec:authorize="hasRole('ROLE_LIVREUR')">
+                <a class="nav-link dropdown-toggle" href="#" id="navnav7" data-toggle="dropdown">
+                    Espace Livreur
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <a class="dropdown-item" th:href="@{/toBeDelivered}">Colis à
+                        livrer</a></div>
+            </li>
+
+            <li class="nav-item dropdown" sec:authorize="hasRole('ROLE_ADMIN')">
+                <a class="nav-link dropdown-toggle" href="#" id="navnav2" data-toggle="dropdown">
+                    Espace Livreur
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <a class="dropdown-item" th:href="@{/deliveryMen}"
+                    >Livreurs</a>
+
                 </div>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-black-50" th:href="@{/}" sec:authorize="hasRole('ROLE_DELIVERY')">Espace Livreur</a>
-            </li>
-            <li class="nav-item">
                 <a class="nav-link text-black-50" th:href="@{/cities}" sec:authorize="hasRole('ROLE_ADMIN')">Villes</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-black-50" th:href="@{/vendors}" sec:authorize="hasRole('ROLE_ADMIN')">Administration</a>
             </li>
         </ul>
     </div>
@@ -46,11 +90,14 @@
     <ul class="navbar-nav float-right">
         <span sec:authorize="isAuthenticated()">
                 <li class="nav-item dropdown dropleft">
-                <a class="nav-link dropdown-toggle btn btn-primary text-white" href="#" id="navbardrop" data-toggle="dropdown">
+                <a class="nav-link dropdown-toggle btn btn-primary text-white" href="#" id="navbardrop"
+                   data-toggle="dropdown">
                     <span sec:authentication="name"></span>
                 </a>
                     <div class="dropdown-menu mr-5" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item" th:href="@{/profile}">Profile</a>
+                        <a class="dropdown-item" th:href="@{/profile}"
+                           sec:authorize="hasRole('ROLE_VENDOR')">Profile</a>
+                        <a class="dropdown-item" th:href="@{/profileLivreur}" sec:authorize="hasRole('ROLE_LIVREUR')">Profile</a>
                         <a class="dropdown-item " th:href="@{/logout}">Se Déconnecter</a>
                     </div>
                 </li>

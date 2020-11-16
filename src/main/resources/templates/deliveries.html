@@ -17,11 +17,18 @@
                         <hr class="mb-5"/>
                         <form class="form-inline" th:action="@{deliveries}" method="get">
                             <input class="form-control mr-sm-2" type="text" name="name" style="border-radius: 25px"
-                                   th:value="${name}" placeholder="Search">
+                                   th:value="${name}" placeholder="chercher par réference">
+                            <select  class="form-control mr-sm-2" name="cityID" style="border-radius: 50px;">
+                                <option value="0">Choisir une ville</option>
+                                <option th:each="v:${villeList}" th:value="${v.id}" th:selected="${v.id}==${cityID}" th:text="${v.name}"></option>
+                            </select>
+
+
                             <button class="btn btn-outline-primary my-2 my-sm-0" style="border-radius: 25px"
                                     type="submit">
                                 Chercher
                             </button>
+
                             <label style="margin-left: 2mm; font-weight: bold">Nb. de livraisons : </label>
                             <label style="margin-left: 4mm; " th:text="${result}"></label>
                         </form>
