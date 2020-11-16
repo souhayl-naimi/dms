@@ -9,12 +9,17 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 import javax.sql.DataSource;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    private AuthenticationSuccessHandler authenticationSuccessHandler;
+
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth, DataSource dataSource)
             throws Exception {
@@ -39,9 +44,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticated();
         http
                 .formLogin()
-                .loginPage("/loginPage")
+                .loginPage("/loginPage").successHandler(authenticationSuccessHandler)
                 .permitAll()
-                .defaultSuccessUrl("/home", true);;
+              ;
         http
                 .logout();
     }
